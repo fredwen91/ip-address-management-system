@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -18,6 +19,15 @@ class AuthService
 
         $user = Auth::user();
         $refreshToken = $this->createRefreshToken($user);
+
+        Http::withHeaders([
+            'X-INTERNAL-KEY' => env('INTERNAL_API_KEY')
+        ])->post(env('IP_MANAGEMENT_SERVICE_URL') . '/api/audit_logs', [
+            'user_id' => $user->id,
+            'action' => 'login',
+            'entity_type' => 'auth',
+            'session_id' => session()->getId(),
+        ]);
 
         return [
             'access_token' => $token,
@@ -60,6 +70,15 @@ class AuthService
     {
         RefreshToken::where('token', $refreshToken)
             ->update(['revoked_at' => now()]);
+
+        Http::withHeaders([
+            'X-INTERNAL-KEY' => env('INTERNAL_API_KEY')
+        ])->post(env('IP_MANAGEMENT_SERVICE_URL') . '/api/audit_logs', [
+            'user_id' => Auth::user()->id,
+            'action' => 'logout',
+            'entity_type' => 'auth',
+            'session_id' => session()->getId(),
+        ]);
 
         Auth::logout();
     }

@@ -22,7 +22,7 @@ Route::any('auth/{authEndpoint}', function ($authEndpoint) {
 
     try {
         $response = Http::withHeaders($headers)
-            ->send($method, 'http://auth-service:8001/api/auth/' . $authEndpoint, $options);
+            ->send($method, env('AUTH_SERVICE_URL') . '/api/auth/' . $authEndpoint, $options);
 
         return response()->json($response->json(), $response->status());
     } catch (\Exception $e) {
