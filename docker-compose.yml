@@ -13,8 +13,6 @@ services:
       - auth-service
       - ip-management-service
     environment:
-      - APP_ENV=local
-      - APP_KEY=base64:SomeRandomKeyHere
       - AUTH_SERVICE_URL=http://auth-service:8001
       - IP_MANAGEMENT_SERVICE_URL=http://ip-management-service:8002
     networks:
@@ -79,6 +77,7 @@ services:
       - gateway-service
     environment:
       - VITE_API_URL=http://localhost:8000/api
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
 
