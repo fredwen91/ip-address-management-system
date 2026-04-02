@@ -21,8 +21,8 @@ class AuthService
         $refreshToken = $this->createRefreshToken($user);
 
         Http::withHeaders([
-            'X-INTERNAL-KEY' => env('INTERNAL_API_KEY')
-        ])->post(env('IP_MANAGEMENT_SERVICE_URL') . '/api/audit_logs', [
+            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
+        ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
             'user_id' => $user->id,
             'action' => 'login',
             'entity_type' => 'auth',
@@ -72,8 +72,8 @@ class AuthService
             ->update(['revoked_at' => now()]);
 
         Http::withHeaders([
-            'X-INTERNAL-KEY' => env('INTERNAL_API_KEY')
-        ])->post(env('IP_MANAGEMENT_SERVICE_URL') . '/api/audit_logs', [
+            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
+        ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
             'user_id' => Auth::user()->id,
             'action' => 'logout',
             'entity_type' => 'auth',

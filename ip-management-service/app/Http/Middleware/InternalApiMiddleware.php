@@ -15,10 +15,10 @@ class InternalApiMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->header('X-INTERNAL-KEY') !== env('INTERNAL_API_KEY')) {
+        if ($request->header('X-INTERNAL-KEY') !== config('myconfig.internal_api_key')) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-        
+
         return $next($request);
     }
 }
