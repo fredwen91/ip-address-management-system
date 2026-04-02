@@ -8,7 +8,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./gateway-service:/var/www
+      - ./gateway-service:/var/www:cached
+      - gateway-service-vendor:/var/www/vendor
     depends_on:
       - auth-service
       - ip-management-service
@@ -27,7 +28,8 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ./auth-service:/var/www
+      - ./auth-service:/var/www:cached
+      - auth-service-vendor:/var/www/vendor
     depends_on:
       - auth-db
     environment:
@@ -49,7 +51,8 @@ services:
     ports:
       - "8002:8002"
     volumes:
-      - ./ip-management-service:/var/www
+      - ./ip-management-service:/var/www:cached
+      - ip-service-vendor:/var/www/vendor
     depends_on:
       - ip-management-db
     environment:
@@ -71,8 +74,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app:cached
+      - frontend-node-modules:/app/node_modules
     depends_on:
       - gateway-service
     environment:
@@ -110,6 +113,10 @@ services:
       - app-network
 
 volumes:
+  gateway-service-vendor:
+  auth-service-vendor:
+  ip-service-vendor:
+  frontend-node-modules:
   auth-db-data:
   ip-management-db-data:
 
