@@ -32,3 +32,31 @@ Route::any('auth/{authEndpoint}', function ($authEndpoint) {
         ], 500);
     }
 })->whereIn('authEndpoint', ['login', 'logout', 'me', 'refresh']);
+
+Route::any('/ip_addresses/{any?}', function ($any = null) {
+    $method = request()->method();
+    $headers = [
+        'Accept' => 'application/json',
+        'Authorization' => request()->header('Authorization')
+    ];
+
+    $options = ['query' => request()->query()];
+
+    if (request()->isJson()) {
+        $options['json'] = request()->json()->all();
+    } else {
+        $options['form_params'] = request()->all();
+    }
+
+    try {
+        $response = Http::withHeaders($headers)
+            ->send($method, config('myconfig.ip_management_service_url') . '/api/ip_addresses/' . $any, $options);
+
+        return response()->json($response->json(), $response->status());
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'IP service unavailable',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
