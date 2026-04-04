@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('refresh_tokens', function (Blueprint $table) {
+        Schema::create('ip_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('token')->unique();
-            $table->timestamp('expires_at');
-            $table->timestamp('revoked_at')->nullable();
+            $table->string('ip_address')->unique();
+            $table->string('label');
+            $table->text('comment')->nullable();
+            $table->foreignId('user_id');
             $table->timestamps();
             $table->index('created_at');
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('refresh_tokens');
+        Schema::dropIfExists('ip_addresses');
     }
 };
