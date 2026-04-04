@@ -55,8 +55,6 @@ const onLogout = async () => {
     <template v-slot:prepend>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </template>
-
-    <v-app-bar-title>{{ $route.meta.title }}</v-app-bar-title>
   </v-app-bar>
 
   <LogoutDialog v-model="showLogout" />
