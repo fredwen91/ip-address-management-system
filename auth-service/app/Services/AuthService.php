@@ -20,14 +20,10 @@ class AuthService
         $user = Auth::user();
         $refreshToken = $this->createRefreshToken($user);
 
-        Http::withHeaders([
-            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
-        ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
+        $this->log([
             'user_id' => $user->id,
             'action' => 'login',
-            'entity_type' => 'auth',
             'entity_id' => $user->id,
-            'session_id' => session()->getId(),
         ]);
 
         return [
@@ -73,15 +69,10 @@ class AuthService
             ->update(['revoked_at' => now()]);
 
         $user = Auth::user();
-
-        Http::withHeaders([
-            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
-        ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
+        $this->log([
             'user_id' => $user->id,
             'action' => 'logout',
-            'entity_type' => 'auth',
             'entity_id' => $user->id,
-            'session_id' => session()->getId(),
         ]);
 
         Auth::logout();
@@ -94,5 +85,18 @@ class AuthService
             'token' => hash('sha256', Str::random(64)),
             'expires_at' => now()->addDays(7)
         ])->token;
+    }
+
+    private function log(array $data): void
+    {
+        Http::withHeaders([
+            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
+        ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
+            'user_id' => $data['user_id'],
+            'action' => $data['action'],
+            'entity_type' => 'auth',
+            'entity_id' => $data['entity_id'],
+            'session_id' => session()->getId(),
+        ]);
     }
 }

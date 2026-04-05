@@ -10,6 +10,7 @@ const { loadingAuditLogs, auditLogs, totalAuditLogs, page, itemsPerPage, fetchAu
 const search = ref('')
 const itemsPerPageOptions = ref([10, 25, 50, 100])
 const headers = ref<DataTableHeader[]>([
+  { title: 'User', key: 'user_name', align: 'start', sortable: false },
   { title: 'Action', key: 'action', align: 'start' },
   { title: 'Entity Type', key: 'entity_type', align: 'start' },
   { title: 'Entity ID', key: 'entity_id', align: 'start' },

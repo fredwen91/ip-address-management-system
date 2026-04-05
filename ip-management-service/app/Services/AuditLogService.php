@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Http;
 
 class AuditLogService
 {
@@ -11,12 +12,29 @@ class AuditLogService
     {
         $perPage = $request->integer('itemsPerPage', 10);
 
-        return AuditLog::query()
+        $auditLogs = AuditLog::query()
             ->select('*')
             ->search($request->search)
             ->sort($request->sortKey, $request->sortOrder)
             ->paginate($perPage)
             ->withQueryString();
+
+        $userIds = $auditLogs->pluck('user_id')->unique()->values();
+
+        $users = Http::withHeaders([
+            'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
+        ])->post(config('myconfig.auth_service_url') . '/api/users/bulk', [
+            'user_ids' => $userIds
+        ])->json();
+
+        $userMap = collect($users)->keyBy('id');
+
+        $auditLogs->transform(function ($ip) use ($userMap) {
+            $ip->user_name = $userMap[$ip->user_id]['name'] ?? null;
+            return $ip;
+        });
+
+        return $auditLogs;
     }
 
     public static function log(array $data): void

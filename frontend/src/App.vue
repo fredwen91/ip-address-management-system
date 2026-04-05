@@ -13,4 +13,9 @@ const auth = useAuthStore()
   </v-app>
 </template>
 
-<style scoped></style>
+<style>
+.v-data-table table th,
+.v-data-table table td {
+  white-space: nowrap !important;
+}
+</style>
