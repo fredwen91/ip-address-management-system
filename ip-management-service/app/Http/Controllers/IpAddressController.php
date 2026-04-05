@@ -46,7 +46,7 @@ class IpAddressController extends Controller
 
     public function destroy(Request $request, string $id)
     {
-        $this->ipAddressService->delete($request->user['id'], $id);
+        $this->ipAddressService->delete($request->user, $id);
 
         return response()->json([
             'message' => 'IP Address deleted successfully.'

@@ -6,6 +6,7 @@ import type { DataTableHeader } from 'vuetify'
 import formatDate from '@/helpers/formatDate'
 import Snackbar from '@/components/Snackbar.vue'
 import UpsertIpAddressDialog from '@/components/UpsertIpAddressDialog.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const {
   loadingIpAddresses,
@@ -21,6 +22,8 @@ const {
   updateIpAddress,
   deleteIpAddress,
 } = useIpAddresses()
+
+const { user } = useAuthStore()
 
 const search = ref('')
 const itemsPerPageOptions = ref([10, 25, 50, 100])
@@ -39,6 +42,14 @@ const resMessage = ref('')
 const snackbarRef = ref<InstanceType<typeof Snackbar> | null>(null)
 
 const dateFormatted = (date: string) => formatDate(date)
+
+const canEdit = (ipAddress: IpAddress) => {
+  return user?.role === 'super_admin' || ipAddress.user_id === user?.id
+}
+
+const canDelete = () => {
+  return user?.role === 'super_admin'
+}
 
 const openDialog = (ipAddress: IpAddress) => {
   if (ipAddressErrors.value) ipAddressErrors.value = {}
@@ -139,6 +150,7 @@ const deleteConfirmed = async () => {
             <v-tooltip text="Edit" location="top">
               <template v-slot:activator="{ props }">
                 <v-btn
+                  v-if="canEdit(item)"
                   v-bind="props"
                   variant="flat"
                   icon
@@ -154,6 +166,7 @@ const deleteConfirmed = async () => {
             <v-tooltip text="Delete" location="top">
               <template v-slot:activator="{ props }">
                 <v-btn
+                  v-if="canDelete()"
                   v-bind="props"
                   variant="flat"
                   icon

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\IpAddress;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class IpAddressService
 {
@@ -48,6 +49,14 @@ class IpAddressService
             throw new NotFoundHttpException('IP address not fount.');
         }
 
+        $user = $data['user'];
+        if (
+            $user['role'] !== 'super_admin' &&
+            $ipAddress->user_id !== $user['id']
+        ) {
+            throw new HttpException(403, 'Forbidden');
+        }
+
         $oldIpAddress = $ipAddress->toArray();
 
         $ipAddress->update([
@@ -57,7 +66,7 @@ class IpAddressService
         ]);
 
         AuditLogService::log([
-            'user_id' => $data['user']['id'],
+            'user_id' => $user['id'],
             'action' => 'update',
             'entity_type' => 'ip',
             'entity_id' => $ipAddress->id,
@@ -71,15 +80,19 @@ class IpAddressService
         return $ipAddress;
     }
 
-    public function delete(int $userId, string $id): void
+    public function delete(array $user, string $id): void
     {
         $ipAddress = IpAddress::find($id);
         if (!$ipAddress) {
             throw new NotFoundHttpException('IP address not fount.');
         }
 
+        if ($user['role'] !== 'super_admin') {
+            throw new HttpException(403, 'Forbidden');
+        }
+
         AuditLogService::log([
-            'user_id' => $userId,
+            'user_id' => $user['id'],
             'action' => 'delete',
             'entity_type' => 'ip',
             'entity_id' => $ipAddress->id,
