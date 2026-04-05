@@ -3,9 +3,26 @@
 namespace App\Services;
 
 use App\Models\AuditLog;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class AuditLogService
 {
+    public function getAll($request): LengthAwarePaginator
+    {
+        $perPage = $request->integer('itemsPerPage', 10);
+        $user = $request->user;
+
+        return AuditLog::query()
+            ->select('*')
+            ->when($user['role'] !== 'super_admin', function ($q) use ($user) {
+                $q->where('user_id', $user['id']);
+            })
+            ->search($request->search)
+            ->sort($request->sortKey, $request->sortOrder)
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
     public static function log(array $data): void
     {
         AuditLog::create([

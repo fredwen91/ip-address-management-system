@@ -33,7 +33,7 @@ Route::any('auth/{authEndpoint}', function ($authEndpoint) {
     }
 })->whereIn('authEndpoint', ['login', 'logout', 'me', 'refresh']);
 
-Route::any('/ip_addresses/{any?}', function ($any = null) {
+Route::any('/{any?}', function ($any = null) {
     $method = request()->method();
     $headers = [
         'Accept' => 'application/json',
@@ -50,7 +50,7 @@ Route::any('/ip_addresses/{any?}', function ($any = null) {
 
     try {
         $response = Http::withHeaders($headers)
-            ->send($method, config('myconfig.ip_management_service_url') . '/api/ip_addresses/' . $any, $options);
+            ->send($method, config('myconfig.ip_management_service_url') . '/api/' . $any, $options);
 
         return response()->json($response->json(), $response->status());
     } catch (\Exception $e) {

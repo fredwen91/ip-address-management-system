@@ -10,4 +10,6 @@ Route::post('/audit_logs', [AuditLogController::class, 'store'])->middleware(Int
 
 Route::middleware([ValidateUserToken::class])->group(function () {
     Route::apiResource('ip_addresses', IpAddressController::class);
+
+    Route::get('audit_logs', [AuditLogController::class, 'index']);
 });
