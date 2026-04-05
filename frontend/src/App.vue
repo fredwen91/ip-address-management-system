@@ -14,8 +14,8 @@ const auth = useAuthStore()
 </template>
 
 <style>
-.v-data-table table th,
+/* .v-data-table table th,
 .v-data-table table td {
   white-space: nowrap !important;
-}
+} */
 </style>
