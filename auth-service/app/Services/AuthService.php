@@ -26,6 +26,7 @@ class AuthService
             'user_id' => $user->id,
             'action' => 'login',
             'entity_type' => 'auth',
+            'entity_id' => $user->id,
             'session_id' => session()->getId(),
         ]);
 
@@ -71,12 +72,15 @@ class AuthService
         RefreshToken::where('token', $refreshToken)
             ->update(['revoked_at' => now()]);
 
+        $user = Auth::user();
+
         Http::withHeaders([
             'X-INTERNAL-KEY' => config('myconfig.internal_api_key')
         ])->post(config('myconfig.ip_management_service_url') . '/api/audit_logs', [
-            'user_id' => Auth::user()->id,
+            'user_id' => $user->id,
             'action' => 'logout',
             'entity_type' => 'auth',
+            'entity_id' => $user->id,
             'session_id' => session()->getId(),
         ]);
 

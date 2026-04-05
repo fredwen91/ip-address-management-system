@@ -19,10 +19,10 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'IP Address' },
     },
     {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/Test.vue'),
-      meta: { requiresAuth: true, title: 'Test' },
+      path: '/autdit-logs',
+      name: 'auditLogs',
+      component: () => import('../views/AuditLogs.vue'),
+      meta: { requiresAuth: true, title: 'Audit Logs' },
     },
     {
       path: '/:catchAll(.*)*',

@@ -34,6 +34,7 @@ class IpAddressService
             'action' => 'create',
             'entity_type' => 'ip',
             'entity_id' => $ipAddress->id,
+            'changes' => $ipAddress,
             'session_id' => session()->getId()
         ]);
 

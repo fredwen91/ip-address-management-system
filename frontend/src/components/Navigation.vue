@@ -4,7 +4,7 @@ import LogoutDialog from '@/components/LogoutDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
-const { logout } = useAuthStore()
+const { logout, user } = useAuthStore()
 const router = useRouter()
 
 const drawer = ref(true)
@@ -22,7 +22,11 @@ const onLogout = async () => {
 <template>
   <v-navigation-drawer v-model="drawer">
     <template v-slot:prepend>
-      <v-list-item lines="two" title="Practical Test" subtitle="TECHLINT Digital Solutions"></v-list-item>
+      <v-list-item
+        lines="two"
+        title="Practical Test"
+        subtitle="TECHLINT Digital Solutions"
+      ></v-list-item>
     </template>
 
     <v-divider></v-divider>
@@ -36,11 +40,12 @@ const onLogout = async () => {
         :to="{ name: 'ipAddress' }"
       ></v-list-item>
       <v-list-item
-        prepend-icon="mdi-ip"
-        title="Test"
-        value="test"
+        v-if="user?.role === 'super_admin'"
+        prepend-icon="mdi-math-log"
+        title="Audit Logs"
+        value="auditLogs"
         color="primary"
-        :to="{ name: 'test' }"
+        :to="{ name: 'auditLogs' }"
       ></v-list-item>
       <v-list-item
         prepend-icon="mdi-logout"

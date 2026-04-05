@@ -6,7 +6,6 @@ import { normalizeTableOptions } from '@/utils/table'
 
 export function useIpAddresses() {
   const loadingIpAddresses = ref(false)
-  const ipAddressError = ref<string | null>(null)
   const ipAddressErrors = ref<Record<string, string[]>>({})
   const ipAddresses = ref<IpAddress[]>([])
   const totalIpAddresses = ref(0)
@@ -18,7 +17,6 @@ export function useIpAddresses() {
 
   const fetchIpAddresses = async (options: LoadItemsParams) => {
     loadingIpAddresses.value = true
-    ipAddressError.value = null
     lastOptions.value = options
 
     try {
@@ -110,7 +108,6 @@ export function useIpAddresses() {
     loadingIpAddresses,
     loadingUpsertIpAddress,
     loadingDeleteIpAddress,
-    ipAddressError,
     ipAddressErrors,
     ipAddresses,
     totalIpAddresses,
