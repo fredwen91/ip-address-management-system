@@ -70,12 +70,20 @@ class IpAddressService
         return $ipAddress;
     }
 
-    public function delete(string $id): void
+    public function delete(int $userId, string $id): void
     {
         $ipAddress = IpAddress::find($id);
         if (!$ipAddress) {
             throw new NotFoundHttpException('IP address not fount.');
         }
+
+        AuditLogService::log([
+            'user_id' => $userId,
+            'action' => 'delete',
+            'entity_type' => 'ip',
+            'entity_id' => $ipAddress->id,
+            'session_id' => session()->getId()
+        ]);
 
         $ipAddress->delete();
     }

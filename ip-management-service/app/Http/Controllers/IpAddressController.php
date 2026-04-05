@@ -6,6 +6,7 @@ use App\Http\Requests\IndexRequest;
 use App\Http\Requests\StoreIpAddressRequest;
 use App\Http\Requests\UpdateIpAddressRequest;
 use App\Services\IpAddressService;
+use Illuminate\Http\Request;
 
 class IpAddressController extends Controller
 {
@@ -43,9 +44,9 @@ class IpAddressController extends Controller
         ]);
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        $this->ipAddressService->delete($id);
+        $this->ipAddressService->delete($request->user['id'], $id);
 
         return response()->json([
             'message' => 'IP Address deleted successfully.'
