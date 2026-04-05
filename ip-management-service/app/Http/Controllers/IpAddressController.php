@@ -35,7 +35,7 @@ class IpAddressController extends Controller
 
     public function update(UpdateIpAddressRequest $request, string $id)
     {
-        $ipAddress = $this->ipAddressService->update($id, $request->validated());
+        $ipAddress = $this->ipAddressService->update($id, $request->all());
 
         return response()->json([
             'message' => 'IP Address updated successfully.',

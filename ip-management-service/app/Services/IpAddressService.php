@@ -22,12 +22,22 @@ class IpAddressService
 
     public function create(array $data): IpAddress
     {
-        return IpAddress::create([
+        $ipAddress = IpAddress::create([
             'ip_address'   => $data['ip_address'],
             'label' => $data['label'],
             'comment' => $data['comment'] ?? null,
             'user_id' => $data['user']['id'],
         ]);
+
+        AuditLogService::log([
+            'user_id' => $data['user']['id'],
+            'action' => 'create',
+            'entity_type' => 'ip',
+            'entity_id' => $ipAddress->id,
+            'session_id' => session()->getId()
+        ]);
+
+        return $ipAddress;
     }
 
     public function update(string $id, array $data): IpAddress
@@ -37,10 +47,24 @@ class IpAddressService
             throw new NotFoundHttpException('IP address not fount.');
         }
 
+        $oldIpAddress = $ipAddress->toArray();
+
         $ipAddress->update([
             'ip_address'   => $data['ip_address'],
             'label' => $data['label'],
             'comment' => $data['comment'] ?? null,
+        ]);
+
+        AuditLogService::log([
+            'user_id' => $data['user']['id'],
+            'action' => 'update',
+            'entity_type' => 'ip',
+            'entity_id' => $ipAddress->id,
+            'changes' => [
+                'before' => $oldIpAddress,
+                'after' => $ipAddress
+            ],
+            'session_id' => session()->getId()
         ]);
 
         return $ipAddress;
